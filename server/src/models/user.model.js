@@ -36,9 +36,14 @@ const userShema=new Schema(
 userShema.pre("save",async function(next) {
     if (!this.isModified("password"))   return next()
       
-  this.password=await bcrypt.hash(this.password,10)
+    this.password=await bcrypt.hash(this.password,10)
    next()
 })
+
+
+userShema.methods.isPasswordCorrect= async function (password) {
+ return await  bcrypt.compare(password,this.password)   
+}
 
 userShema.methods.generateAccessToken=function(){
    return Jwt.sign(
