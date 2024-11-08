@@ -1,22 +1,67 @@
 import './App.css'
+import { UserProvider } from './context/UserContext.jsx'
 import SignUp from './pages/SignUp'
-import {BrowserRouter as  Route,Router,Routes} from 'react-router-dom'
 import LogIn from './pages/LogIn.jsx'
 import Nav from './components/Nav.jsx'
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Outlet
+} from "react-router-dom";
+import DashBoard from './pages/DashBoard.jsx'
+import VerifyOTP from './components/VerifyOTP.jsx'
+
+
+function NavLayout() {
+  return (
+    <>
+      <Nav />
+      <Outlet />  {/* This Outlet is where nested routes (like SignUp) will be rendered */}
+    </>
+  );
+}
+
+
 
 function App() {
 
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element:
+        <UserProvider>
+          <NavLayout />
+        </UserProvider>,
+      children: [
+        {
+          path: "/",
+          element:   <SignUp />
+        },
+        {
+          path: "/login",
+          element: <LogIn />,
+        },
+        {
+          path: "/dashBoard",
+          element: <DashBoard />
+        },
+        {
+          path:"/OtpVerify",
+          element:<VerifyOTP/>
+        },
+        {
+          path:'/forgetPassword'
+        }
 
+      ],
+    },
+  ]);
   return (
+
     <>
-    <Nav/>
-    <SignUp/>
-    {/* <Router>
-      <Routes>
-        <Route path='/Login' element={<LogIn/>}/>
-      </Routes>
-    </Router> */}
-     
+
+      <RouterProvider router={router} />
+
     </>
   )
 }

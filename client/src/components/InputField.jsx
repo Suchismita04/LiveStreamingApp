@@ -1,20 +1,23 @@
-import React from 'react'
-import { useForm } from 'react-hook-form'
+import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-function InputField({ name, lable, type = "text" }) {
-  const { register, formState: { error } } = useForm()
-
+function InputField({ name, type = "text", value, onChange, register, errors }) {
   return (
-
-    <>
-      <div className="input-group mb-3">
-        <input {...register(name,{required:true})} id={name} type={type} className="form-control" placeholder={name} aria-label="Username" aria-describedby="basic-addon1" />
-        {/* {error[name] && <p>{error[name].message}</p>} */}
-      </div>
-
-    </>
-  )
+    <div className="input-group mb-3">
+      <input
+        {...register(name, { required: `${name} is required` })}
+        onChange={onChange}
+        value={value}
+        id={name}
+        type={type}
+        className="form-control"
+        placeholder={name}
+        aria-label={name}
+        aria-describedby="basic-addon1"
+      />
+      {errors[name] && <p className="text-danger">{errors[name].message}</p>}
+    </div>
+  );
 }
 
-export default InputField
+export default InputField;
