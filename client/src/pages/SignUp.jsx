@@ -19,6 +19,14 @@ function SignUp() {
   })
 
 
+  const storeToken=(token)=>{
+    if (token) {
+      localStorage.setItem('token', token);
+    } else {
+      console.error("Error: Token is undefined or null");
+    }
+  }
+
   const navigate=useNavigate();
   const handleOnSubmit = async (e) => {
    
@@ -26,9 +34,12 @@ function SignUp() {
       const response=await api.post('/v1/users/signUpUserRouter',formData)
       console.log("res",response)
       if (response.status === 201) {
-        // console.log("hello from if case")
+       
         setUserE(formData.email)
-        // console.log("user context",user)
+
+   const JwtToken=response.data.data.accessToken
+  console.log("token from  sign in ",JwtToken)
+        storeToken(JwtToken)
         console.log("form data",formData)
         alert('Sign Up Successfull')
         navigate('/dashBoard')

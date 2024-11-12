@@ -12,6 +12,7 @@ const generateOTP= crypto.randomInt(100000,999999)
 const  requestOTP=asyncHandler(async(req,res)=>{
       const {email}=req.body
       const otp=generateOTP
+      console.log("OTP from requesting otp",otp)
       const expTimeAt= Date.now()+5*60*1000
 
      try {
@@ -20,12 +21,15 @@ const  requestOTP=asyncHandler(async(req,res)=>{
            {new:true,upsert:true}
          )
 
-
+     if (!user) {
+        throw new ApiError(401,'Invali Credential')
+     }
          await sendOTPemail(email,otp)
 
          res.status(200).json({message:'OTP sent to email'})
      } catch (error) {
-        res.status(500).json({message:'Soomething went wrong'})
+        console.log("error from catch of requesting otp",error)
+        res.status(500).json({message:'Something went wrong'})
      }
 
 
@@ -36,7 +40,7 @@ const  requestOTP=asyncHandler(async(req,res)=>{
 const verifyOTP=asyncHandler(async(req,res)=>{
 
     const {email,otp}=req.body
-    const user=await User.findOne({email})
+    const user=await User.findById(req.user._id)
 
     if (!user) {
         throw new ApiError(404,'User not found')

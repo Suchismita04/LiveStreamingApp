@@ -3,6 +3,7 @@ import { User } from "../models/user.model.js";
 import { ApiError } from "../utilities/ApiError.js";
 import { ApiResponse } from "../utilities/ApiResponse.js"
 import { asyncHandler } from "../utilities/asyncHandler.js"
+import dns from 'dns'
 
 
 const generateAcceessAndRefreshToken = async (userId) => {
@@ -22,12 +23,12 @@ const generateAcceessAndRefreshToken = async (userId) => {
 
 
 const SignUpUser = asyncHandler(async (req, res) => {
-    const {userName,email,password} = req.body;
+    const { userName, email, password } = req.body;
 
     // console.log("key name", key)
     if (!userName || !email || !password) {
         return res.status(400).json({ msg: 'Please provide all fields' });
-      }
+    }
     console.log("from body  ", req.body)
 
     if ([userName, email, password].some((fields) => { fields?.trim() === "" })) {
@@ -37,22 +38,33 @@ const SignUpUser = asyncHandler(async (req, res) => {
     const userExist = await User.findOne({
         $or: [{ userName }, { email }]
     })
- 
+
     if (userExist) {
         throw new ApiError(409, "User is already exist")
     }
 
-    const createdNewUser = await User.create({ userName, email, password })
+    const createdNewUser = await User.create({ userName, email, password})
     const createdUser = await User.findById(createdNewUser._id).select("-password -refreshToken")
     if (!createdUser) {
         throw new ApiError(500, "Server Issue")
     }
 
-    return res.status(201).json(
+
+    const { accessToken, refreshToken } = await generateAcceessAndRefreshToken(createdUser._id)
+    const option={
+        httpOnly:true,
+        secure:true
+    }
+
+    console.log("token from sign in controller",accessToken)
+
+
+    return res.status(201).cookie("accessToken",accessToken,option).cookie("refreshToken",refreshToken,option).json(
         new ApiResponse(200, {
             _id: createdUser._id,
             userName: createdUser.userName,
-            email: createdUser.email
+            email: createdUser.email,
+            accessToken,refreshToken
         }, "User is successfully registared")
     )
 
@@ -98,32 +110,31 @@ const LogInUser = asyncHandler(async (req, res) => {
 })
 
 
-const LogOutUser=asyncHandler(async(req,res)=>{
-    const authorizetionHeader=req.headers.authorization
-    console.log("auth",authorizetionHeader)
-    if(authorizetionHeader)
-    {
-        const token= authorizetionHeader.split(' ')[1]
-        res.status(200).json({message:"Log Out Successfully"})
+const LogOutUser = asyncHandler(async (req, res) => {
+    const authorizetionHeader = req.headers.authorization
+    console.log("auth", authorizetionHeader)
+    if (authorizetionHeader) {
+        const token = authorizetionHeader.split(' ')[1]
+        res.status(200).json({ message: "Log Out Successfully" })
     }
-    else{
-        throw new ApiError(401,'Authorization token missing')
+    else {
+        throw new ApiError(401, 'Authorization token missing')
     }
 })
 
-const getUserDetails=asyncHandler(async(req,res)=>{
+const getUserDetails = asyncHandler(async (req, res) => {
 
-try {
-    const user= await User.findById(req.user._id).select('-password')
-    if (!user) {
-        throw new ApiError(404,'User not found')
+    try {
+        const user = await User.findById(req.user._id).select('-password')
+        if (!user) {
+            throw new ApiError(404, 'User not found')
+        }
+        res.json(user)
+    } catch (error) {
+        throw new ApiError(500, error.message)
     }
-    res.json(user)
-} catch (error) {
-    throw new ApiError(500,error.message)
-}
 
 })
 
 
-export { SignUpUser, LogInUser,LogOutUser,getUserDetails }
+export { SignUpUser, LogInUser, LogOutUser, getUserDetails }
