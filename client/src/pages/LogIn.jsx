@@ -96,8 +96,8 @@ function LogIn() {
         <div className="formClass">
           <form onSubmit={handleSubmit(handleOnSubmit)} className='p-4 rounded-3 m-4' style={{ "border": "2px solid #ae50e2", "width": "33rem", "height": "27rem", "alignContent": "center" }} >
             <h2 className='my-2 p-4'>Welcome Back</h2>
-            <InputField name='email' type='email' lable='Email' onChange={handleOnChange} register={register} errors={errors} />
-            <InputField name='password' type='password' lable='Password' onChange={handleOnChange} register={register} errors={errors} />
+            <InputField name='email' type='email' onChange={handleOnChange} register={register} errors={errors} />
+            <InputField name='password' type='password'  onChange={handleOnChange} register={register} errors={errors} />
             <Button type='submit' onClick={handleRequestOtp}>Send OTP</Button>
             <Link to='/forgetPassword' className='primary text-decoration-underline f-color d-flex justify-content-center my-3'>Forget Password? </Link>
             <p>Create New Account <Link to='/' className='primary text-decoration-underline f-color'>SignUp</Link></p>
