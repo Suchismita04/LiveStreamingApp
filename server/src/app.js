@@ -21,8 +21,19 @@ app.use(cookieParser())
 
 
 //io connection
+const emailToSocketMapping=new Map()
+
+
+
+
 io.on('connection',(socket)=>{
-    
+    socket.on('join-room',(req,res)=>{
+        const {roomID,email}=req.body
+         console.log("room id ",roomID,"email id",email)
+         emailToSocketMapping.set(email,socket.id)
+         socket.join(roomID)
+         socket.broadcast.emit('user-joined',{email})
+    })
 })
 
 

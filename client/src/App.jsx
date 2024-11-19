@@ -1,5 +1,6 @@
 import './App.css'
 import { UserProvider } from './context/UserContext.jsx'
+import { SoketProvider } from './context/SocketContext.jsx'
 import SignUp from './pages/SignUp'
 import LogIn from './pages/LogIn.jsx'
 import Nav from './components/Nav.jsx'
@@ -10,6 +11,7 @@ import {
 } from "react-router-dom";
 import DashBoard from './pages/DashBoard.jsx'
 import VerifyOTP from './components/VerifyOTP.jsx'
+
 
 
 function NavLayout() {
@@ -29,13 +31,15 @@ function App() {
     {
       path: "/",
       element:
-        <UserProvider>
-          <NavLayout />
-        </UserProvider>,
+        <SoketProvider>
+          <UserProvider>
+            <NavLayout />
+          </UserProvider>
+        </SoketProvider>,
       children: [
         {
           path: "/",
-          element:   <SignUp />
+          element: <SignUp />
         },
         {
           path: "/login",
@@ -46,11 +50,11 @@ function App() {
           element: <DashBoard />
         },
         {
-          path:"/OtpVerify",
-          element:<VerifyOTP/>
+          path: "/OtpVerify",
+          element: <VerifyOTP />
         },
         {
-          path:'/forgetPassword'
+          path: '/forgetPassword'
         }
 
       ],
