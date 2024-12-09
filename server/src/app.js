@@ -6,7 +6,11 @@ import otpRouter from './routes/otp.router.js'
 import {Server, Socket} from 'socket.io'
 
 const app=express()
-const io=new Server()
+const io=new Server(
+    {
+        cors:true,
+    }
+)
 
 
 //Middlewares
@@ -28,6 +32,7 @@ const emailToSocketMapping=new Map()
 
 io.on('connection',(socket)=>{
     socket.on('join-room',(req,res)=>{
+        console.log("New Connection")
         const {roomID,email}=req.body
          console.log("room id ",roomID,"email id",email)
          emailToSocketMapping.set(email,socket.id)
