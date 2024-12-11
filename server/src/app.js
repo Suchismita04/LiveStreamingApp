@@ -31,13 +31,14 @@ const emailToSocketMapping=new Map()
 
 
 io.on('connection',(socket)=>{
-    socket.on('join-room',(req,res)=>{
+    socket.on('join-room',(data)=>{
         console.log("New Connection")
-        const {roomID,email}=req.body
-         console.log("room id ",roomID,"email id",email)
+        const {roomID,email}=data
+         console.log("room id ",roomID,"email id",email,"is joined room")
          emailToSocketMapping.set(email,socket.id)
          socket.join(roomID)
-         socket.broadcast.emit('user-joined',{email})
+         socket.emit('joined-room',{roomID})
+         socket.broadcast.to(roomID).emit('user-joined',{email})
     })
 })
 
