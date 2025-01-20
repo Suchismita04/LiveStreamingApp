@@ -1,16 +1,17 @@
-import './App.css'
 import { UserProvider } from './context/UserContext.jsx'
 import { SoketProvider } from './context/SocketContext.jsx'
 import SignUp from './pages/SignUp'
 import LogIn from './pages/LogIn.jsx'
 import Nav from './components/Nav.jsx'
+import DashBoard from './pages/DashBoard.jsx'
+import VerifyOTP from './components/VerifyOTP.jsx'
+import JoinedRoom from './pages/JoinedRoom.jsx'
+import ForgetPassword from './pages/ForgetPassword.jsx'
 import {
   createBrowserRouter,
   RouterProvider,
   Outlet
 } from "react-router-dom";
-import DashBoard from './pages/DashBoard.jsx'
-import VerifyOTP from './components/VerifyOTP.jsx'
 
 
 
@@ -54,7 +55,12 @@ function App() {
           element: <VerifyOTP />
         },
         {
-          path: '/forgetPassword'
+          path: '/forgetPassword',
+          element:<ForgetPassword/>
+        },
+        {
+          path:'/joinedRoom/:roomId',
+          element:<JoinedRoom/>
         }
 
       ],
