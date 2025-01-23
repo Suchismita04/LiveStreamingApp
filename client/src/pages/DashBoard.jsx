@@ -19,22 +19,53 @@ function DashBoard() {
 
   const handleOnChange = (event) => {
     setRoomID(event.target.value)
-    // console.log("room id from handle on change:",roomID)
+   
   }
 
-  const handleRoomJoined = ({roomID}) => {
-    
-    console.log("new user joined room & room id:",roomID)
-    navigate(`/joinedRoom/${roomID}`)
+  const handleRoomJoined = ({ roomID }) => {
+
+    console.log("new user joined room & room id:", roomID)
+    if (roomID) {
+      navigate(`/joinedRoom/${roomID}`)
+    }
+
   }
 
+
+  // Listen for the "joined-room" event
   useEffect(() => {
-    console.log("from use effect:",roomID)
-    socket.on('user-joined', handleRoomJoined)
-  }, [socket])
 
+    socket.on('joined-room', handleRoomJoined)
+    return () => {
+      socket.off('joined-room', handleRoomJoined)  //clear the listener
+    }
+
+  }, [socket,navigate])
+
+
+  //Listen for other user joined
+
+
+
+  useEffect(()=>{
+    const handleUserjoined=({email})=>{
+      console.log(`new user joined ${email}`)
+      alert(`${email} is joined`)
+     }
+    
+    socket.on('user-joined',handleUserjoined)
+
+    return ()=>{
+      socket.off('user-joined',handleUserjoined)
+    }
+  },[socket])
 
   const handleJoinRoom = () => {
+
+    if(!roomID.trim())
+    {
+      console.log("room id is required")
+    }
     socket.emit("join-room", { roomID, email })
     setDisabled(true)
 
@@ -42,7 +73,7 @@ function DashBoard() {
 
 
 
-  
+
 
   return (
     <div>
