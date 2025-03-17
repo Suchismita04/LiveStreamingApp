@@ -26,6 +26,7 @@ app.use(cookieParser())
 
 //io connection
 const emailToSocketMapping=new Map()
+const socketToEmailMapping=new Map()
 
 
 
@@ -36,9 +37,22 @@ io.on('connection',(socket)=>{
         const {roomID,email}=data
          console.log("room id ",roomID,"email id",email,"is joined room")
          emailToSocketMapping.set(email,socket.id)
+         socketToEmailMapping.set(socket.id,email)
          socket.join(roomID)
          socket.emit('joined-room',{roomID})
-         socket.broadcast.to(roomID).emit('user-joined',{email})
+         console.log("email : ",email,"room id : ",roomID)
+        //  socket.broadcast.to(roomID).emit('user-joined',{email})
+         io.to(roomID).emit('user-joined',{email})
+    })
+
+    socket.on('call-user',data=>{
+        const {emailId,offer}=data
+        console.log(emailId,offer)
+        const socketId=emailToSocketMapping.get(socket.id)
+        console.log("soc id",socketId)
+
+        const fromEmail=socketToEmailMapping(socketId)
+        socket.to(socketId).emit('incomming-call',{from:fromEmail,offer})
     })
 })
 

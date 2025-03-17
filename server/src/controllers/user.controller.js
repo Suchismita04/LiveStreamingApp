@@ -23,9 +23,9 @@ const generateAcceessAndRefreshToken = async (userId) => {
 
 
 const SignUpUser = asyncHandler(async (req, res) => {
-    const { userName, email, password } = req.body;
+    const { userName, email, password,} = req.body;
 
-    // console.log("key name", key)
+    // console.log("key name",_id)
     if (!userName || !email || !password) {
         return res.status(400).json({ msg: 'Please provide all fields' });
     }
@@ -59,12 +59,12 @@ const SignUpUser = asyncHandler(async (req, res) => {
     console.log("token from sign in controller",accessToken)
 
 
-    return res.status(201).cookie("accessToken",accessToken,option).cookie("refreshToken",refreshToken,option).json(
+    return res.status(201).cookie("accessToken",accessToken,option).json(
         new ApiResponse(200, {
             _id: createdUser._id,
             userName: createdUser.userName,
             email: createdUser.email,
-            accessToken,refreshToken
+            accessToken
         }, "User is successfully registared")
     )
 
@@ -123,9 +123,11 @@ const LogOutUser = asyncHandler(async (req, res) => {
 })
 
 const getUserDetails = asyncHandler(async (req, res) => {
+    const id=req.user._id
+    console.log("id",id)
 
     try {
-        const user = await User.findById(req.user._id).select('-password')
+        const user = await User.findById(id).select('-password')
         if (!user) {
             throw new ApiError(404, 'User not found')
         }

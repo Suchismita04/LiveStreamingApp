@@ -1,5 +1,6 @@
 import { UserProvider } from './context/UserContext.jsx'
 import { SoketProvider } from './context/SocketContext.jsx'
+import { PeerProvider } from './context/peer.jsx'
 import SignUp from './pages/SignUp'
 import LogIn from './pages/LogIn.jsx'
 import Nav from './components/Nav.jsx'
@@ -7,6 +8,7 @@ import DashBoard from './pages/DashBoard.jsx'
 import VerifyOTP from './components/VerifyOTP.jsx'
 import JoinedRoom from './pages/JoinedRoom.jsx'
 import ForgetPassword from './pages/ForgetPassword.jsx'
+
 import {
   createBrowserRouter,
   RouterProvider,
@@ -33,9 +35,11 @@ function App() {
       path: "/",
       element:
         <SoketProvider>
-          <UserProvider>
-            <NavLayout />
-          </UserProvider>
+          <PeerProvider>
+            <UserProvider>
+              <NavLayout />
+            </UserProvider>
+          </PeerProvider>
         </SoketProvider>,
       children: [
         {
@@ -56,11 +60,11 @@ function App() {
         },
         {
           path: '/forgetPassword',
-          element:<ForgetPassword/>
+          element: <ForgetPassword />
         },
         {
-          path:'/joinedRoom/:roomId',
-          element:<JoinedRoom/>
+          path: '/joinedRoom/:roomId',
+          element: <JoinedRoom />
         }
 
       ],
